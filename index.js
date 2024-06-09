@@ -6,7 +6,7 @@ const PORT = 3000
 
 
 
-app.get('/users', (req, res) => {
+app.get('/api/users', (req, res) => {
     return res.json(users)
 })
 

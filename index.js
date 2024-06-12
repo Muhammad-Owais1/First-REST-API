@@ -3,7 +3,7 @@ const fs = require('fs')
 const users = require('./MOCK_DATA.json')
 
 const app = express()
-const PORT = 
+const PORT = 3000
 
 app.use(express.urlencoded({extended: false}))
 
@@ -30,19 +30,30 @@ app.route('/api/users/:id')
 })
 
 .patch((req, res) => {
-    return res.json({status: 'pending'})
+    const id = Number(req.params.id);
+    const index = users.findIndex((user) => user.id === id);
+    const updatedUser = { ...users[index], ...req.body };
+    users[index] = updatedUser;
+    fs.writeFile('./MOCK_DATA.json', JSON.stringify(users), () => {
+        return res.json(updatedUser);
+    });
 })
 .delete((req, res) => {
-    return res.json({status: 'pending'})
+    const id = Number(req.params.id);
+    const index = users.findIndex((user) => user.id === id);
+    const deletedUser = users.splice(index, 1);
+    fs.writeFile('./MOCK_DATA.json', JSON.stringify(users), () => {
+        return res.json(deletedUser[0]);
+    });
 })
-
+ 
 app.post('/api/users', (req, res) => {
     const body = req.body
-    users.push(body)
+    users.push({...body, id: users.length + 1 })
     fs.writeFile('./MOCK_DATA.json', JSON.stringify(users), (err, data) => {
         return res.json({status: 'pending'})
     })
-})
+}) 
 
 
 
